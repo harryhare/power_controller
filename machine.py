@@ -21,7 +21,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 		print("GET")
 		cur_freq=get_cur_freq()
 		res=json.dumps(cur_freq)
-		self.wfile.write(res)
+		self.wfile.write(bytes(res, 'UTF-8'))
 		self.send_response(200)
 		self.end_headers()
 
