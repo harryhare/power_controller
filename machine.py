@@ -21,9 +21,9 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 		print("GET")
 		cur_freq=get_cur_freq()
 		res=json.dumps(cur_freq)
-		self.wfile.write(bytes(res, 'UTF-8'))
 		self.send_response(200)
 		self.end_headers()
+		self.wfile.write(bytes(res, 'UTF-8'))
 
 	def do_POST(self):
 		print( "POST")
@@ -32,7 +32,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 
 
 Handler = SETHandler
-PORT = 80
+PORT = 8080
 httpd = socketserver.TCPServer(("", PORT), Handler)
 print("serving at port", PORT)
 httpd.serve_forever()
