@@ -2,29 +2,7 @@ import socketserver
 import http.server
 import urllib.parse
 import json
-
-from multiprocessing import cpu_count
-
-available_freq=[1600000,1500000,1400000,1300000,1200000]
-cpu_num = cpu_count()
-
-
-def get_cur_freq():
-	cur_freq_file = "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_cur_freq"
-	cur_freq=[0]*cpu_num
-	for i in range(cpu_num):
-		file = open(cur_freq_file%(i),"r")
-		cur=file.read()[:-1]
-		cur_freq[i] = int(cur)
-		file.close()
-	return cur_freq
-
-def set_freq(core, freq):
-	set_freq_file = "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_setspeed"
-	file=open(set_freq_file%(core),"w")
-	file.write(str(freq))
-	file.close()
-	return
+from cpu_freq import *
 
 class SETHandler(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
@@ -54,7 +32,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 				for t in available_freq:
 					if t<=f:
 						t=f
-						break;
+						break
 			if(core!=-1):
 				set_freq(core,freq)
 			else:
@@ -66,7 +44,6 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			self.send_response(500)
 			res="bad gateway"
 		self.end_headers()
-		res+='\n'
 		self.wfile.write(bytes(res, 'UTF-8'))
 
 	def do_POST(self):
