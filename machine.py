@@ -40,7 +40,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 
 
 Handler = SETHandler
-PORT = 80
+PORT = 8080
 httpd = socketserver.TCPServer(("", PORT), Handler)
 print("serving at port", PORT)
 httpd.serve_forever()
