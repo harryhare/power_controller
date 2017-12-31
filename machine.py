@@ -64,7 +64,9 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			res = json.dumps(cur_freq)
 		else:
 			self.send_response(500)
+			res="bad gateway"
 		self.end_headers()
+		res+='\n'
 		self.wfile.write(bytes(res, 'UTF-8'))
 
 	def do_POST(self):
