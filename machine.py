@@ -22,16 +22,15 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			res=json.dumps(cur_freq)
 			self.send_response(200)
 		elif(path=='/set'):
-			self.send_response(200)
 			core=-1
 			freq=1200000
 			if 'core' in params.keys():
-				core= params['core']
+				core= int(params['core'][0])
 			if 'freq' in params.keys():
-				f=params['freq']
+				f=int(params['freq'][0])
 				for t in available_freq:
 					if t<=f:
-						t=f
+						freq=t
 						break
 			if(core!=-1):
 				set_freq(core,freq)
@@ -40,6 +39,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 					set_freq(i,freq)
 			cur_freq = get_cur_freq()
 			res = json.dumps(cur_freq)
+			self.send_response(200)
 		else:
 			self.send_response(500)
 			res="bad gateway"
