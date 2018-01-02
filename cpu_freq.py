@@ -1,4 +1,5 @@
 from multiprocessing import cpu_count
+import psutil
 
 available_freq=[1600000,1500000,1400000,1300000,1200000]
 cpu_num = cpu_count()
@@ -24,3 +25,19 @@ def set_freq(core, freq):
 	file.write(str(freq))
 	file.close()
 	return
+
+
+def get_util():
+	return psutil.cpu_percent(0)
+
+
+def get_util_top():
+	return psutil.cpu_percent(0)
+
+if __name__=='__main__':
+	print(psutil.cpu_stats())
+	print(psutil.cpu_percent(None))
+	print(psutil.cpu_percent(0))
+	print(psutil.cpu_percent(1))
+	print(psutil.cpu_percent(2))
+	print(psutil.cpu_percent(3))

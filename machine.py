@@ -17,11 +17,15 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			[path,queryString]=self.path.split('?', 1)
 			queryString = urllib.parse.unquote(queryString)
 			params = urllib.parse.parse_qs(queryString)
-		if(path=='/get'):
+		if(path=='/get_freq'):
 			cur_freq=get_cur_freq()
 			res=json.dumps(cur_freq)
 			self.send_response(200)
-		elif(path=='/set'):
+		elif(path=='/get_util'):
+			util=get_util()
+			res=str(util)
+			self.send_response(200)
+		elif(path=='/set_freq'):
 			core=-1
 			freq=1200000
 			if 'core' in params.keys():
