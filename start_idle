@@ -1,0 +1,10 @@
+#!/bin/bash
+pwd
+for((i=0;i<6;i++))
+do
+    #echo idle$i
+    /home/mayue/power_controller/idle &
+    pid=$!
+    echo $pid > idle$i.pid
+done
+
