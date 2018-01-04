@@ -1,0 +1,10 @@
+#!/bin/bash
+#pwd
+for((i=0;i<6;i++))
+do
+    pid=`cat idle$i.pid`
+    echo kill $pid
+    kill $pid
+    rm idle$i.pid
+done
+

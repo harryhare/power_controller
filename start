@@ -1,3 +1,3 @@
 #!/bin/bash
-sudo python3 machine.py > machine.log &
+sudo python3 machine.py 1>machine.log 2>&1 &
 
