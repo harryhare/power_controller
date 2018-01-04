@@ -82,14 +82,14 @@ def get_power_freq_data():
 	for freq in available_freq:
 		set_freq_all(freq)
 		print("freq%d:"%(freq))
-		time.sleep(5)
+		time.sleep(60)
 		p=get_total_power()
 		p=p/(len(machines)*core_num)
 		a[freq]=p
 		print("%f\n"%(p))
-	file = open("power_freq.data")
+	file = open("power_freq.data",'w')
 	for freq in available_freq:
-		file.write(freq,",",a[freq])
+		file.write(str(freq)+","+str(a[freq])+'\n')
 	file.close()
 	return a
 
