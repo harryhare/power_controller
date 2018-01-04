@@ -2,6 +2,8 @@ import urllib.request
 import json
 import re
 import platform
+import time
+from cpu_freq import available_freq
 
 machines=["http://192.168.1.99:8081","http://192.168.1.98:8081","http://192.168.1.74:8081"]
 pdu="http://192.168.1.100/port_status.shtml"
@@ -21,7 +23,7 @@ def get_freq(machine):
 	data=json.loads(data)
 	return data
 
-def set_freq_core(machine,core, freq):
+def set_freq_core(machine, core, freq):
 	res=urllib.request.urlopen(machine+"/set_freq?core=%d&freq=%d"%(core,freq))
 	data=res.read().decode('utf-8')
 	data=json.loads(data)
@@ -33,11 +35,21 @@ def set_freq(machine,freq):
 		a=(set_freq_core(machines[machine],i,freq))
 	return a
 
+def set_freq_all(freq):
+	for m in range(len(machines)):
+		set_freq(m,freq)
 
 def get_freq_all():
 	a=[]
 	for m in machines:
 		a.append(get_freq(m))
+	return a
+def get_freq_average():
+	a=[]
+	for m in machines:
+		b=get_freq(m)
+		avg=sum(b)/len(b)
+		a.append(avg)
 	return a
 
 def get_total_power():
@@ -64,8 +76,27 @@ def get_util_all():
 		a.append(get_util(m))
 	return a
 
+
+def get_power_freq_data():
+	a={}
+	for freq in available_freq:
+		set_freq_all(freq)
+		print("freq%d:"%(freq))
+		time.sleep(5)
+		p=get_total_power()
+		p=p/(len(machines)*core_num)
+		a[freq]=p
+		print("%f\n"%(p))
+	file = open("power_freq.data")
+	for freq in available_freq:
+		file.write(freq,",",a[freq])
+	file.close()
+	return a
+
 if __name__=="__main__":
 	print(get_freq_all())
+	print(get_freq_average())
 	print(get_total_power())
 	print(set_freq(0,1300000))
 	print(get_util_all())
+	print(get_power_freq_data())
