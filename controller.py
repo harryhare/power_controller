@@ -68,7 +68,8 @@ def get_total_power():
 def get_util(machine):
 	res=urllib.request.urlopen(machine+"/get_util")
 	data=res.read().decode('utf-8')
-	return float(data)
+	data=json.loads(data)
+	return data
 
 def get_util_all():
 	a=[]
@@ -94,9 +95,9 @@ def get_power_freq_data():
 	return a
 
 if __name__=="__main__":
-	print(get_freq_all())
-	print(get_freq_average())
-	print(get_total_power())
-	print(set_freq(0,1300000))
-	print(get_util_all())
-	print(get_power_freq_data())
+	print('freq:',str(get_freq_all()))
+	print('freq_average:',get_freq_average())
+	print('power:',get_total_power())
+	print('set_freq:',set_freq(0,1300000))
+	print('util:',get_util_all())
+	#print(get_power_freq_data())

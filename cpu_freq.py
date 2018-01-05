@@ -30,9 +30,11 @@ def set_freq(core, freq):
 	return
 
 
-def get_util():
+def get_util_total():
 	return psutil.cpu_percent(0)
 
+def get_util():
+	return psutil.cpu_percent(0,True)
 
 def get_util_top():
 	return psutil.cpu_percent(0)
@@ -40,6 +42,8 @@ def get_util_top():
 if __name__=='__main__':
 	print(psutil.cpu_stats())
 	print(psutil.cpu_percent(None))
+	print(psutil.cpu_percent(None,True))
+	print(psutil.cpu_percent(1,True))
 	print(psutil.cpu_percent(0))
 	print(psutil.cpu_percent(1))
 	print(psutil.cpu_percent(2))

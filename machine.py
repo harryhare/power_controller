@@ -23,7 +23,7 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			self.send_response(200)
 		elif(path=='/get_util'):
 			util=get_util()
-			res=str(util)
+			res=json.dumps(util)
 			self.send_response(200)
 		elif(path=='/set_freq'):
 			core=-1
