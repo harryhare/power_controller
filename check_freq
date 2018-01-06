@@ -1,0 +1,17 @@
+#!/bin/bash
+for((i=1200000;i<=1600000;i=i+100000))
+do
+    echo $i > /sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed
+    echo $i > /sys/devices/system/cpu/cpu1/cpufreq/scaling_setspeed
+    echo $i > /sys/devices/system/cpu/cpu2/cpufreq/scaling_setspeed
+    echo $i > /sys/devices/system/cpu/cpu3/cpufreq/scaling_setspeed
+    echo $i > /sys/devices/system/cpu/cpu4/cpufreq/scaling_setspeed
+    echo $i > /sys/devices/system/cpu/cpu5/cpufreq/scaling_setspeed
+    #cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
+    echo freq:$i 
+    time ./time_test
+    curl -s -u user:user http://192.168.1.100/port_status.shtml | grep CA 
+    echo '*********************************************************'
+    echo ''
+done
+
