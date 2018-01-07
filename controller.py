@@ -58,12 +58,16 @@ def get_total_power():
 	opener = urllib.request.build_opener(auth_handler)
 	# ...and install it globally so it can be used with urlopen.
 	urllib.request.install_opener(opener)
-	res=urllib.request.urlopen(pdu)
-	data=res.read().decode('utf-8')
-	m=re.search('CA:\s+(\d+.\d*)A',data)
-	#print(m.groups())
-	#print(m.group())
-	return float(m.group(1))*220
+	sum=0.0
+	n=100
+	for i in range(n):
+		res=urllib.request.urlopen(pdu)
+		data=res.read().decode('utf-8')
+		m=re.search('CA:\s+(\d+.\d*)A',data)
+		#print(m.groups())
+		#print(m.group())
+		sum+=float(m.group(1))
+	return sum/n
 
 def get_util(machine):
 	res=urllib.request.urlopen(machine+"/get_util")
