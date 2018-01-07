@@ -2,6 +2,7 @@ import socketserver
 import http.server
 import urllib.parse
 import json
+import os
 from cpu_freq import *
 
 class SETHandler(http.server.BaseHTTPRequestHandler):
@@ -24,6 +25,12 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 		elif(path=='/get_util'):
 			util=get_util()
 			res=json.dumps(util)
+			self.send_response(200)
+		elif(path=='start_idle'):
+			res=str(os.system("./start_idle"))
+			self.send_response(200)
+		elif(path=='stop_idle'):
+			res=str(os.system("./stop_idle"))
 			self.send_response(200)
 		elif(path=='/set_freq'):
 			core=-1

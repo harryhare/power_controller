@@ -25,12 +25,37 @@ if(platform.platform()=='Windows-7-6.1.7601-SP1'):
 	core_num=4
 	current_sample_num = 5
 
+
 def get_freq(machine):
 	res=urllib.request.urlopen(machine+"/get_freq")
 	#print(res.read().decode('utf-8'))
 	data=res.read().decode('utf-8')
 	data=json.loads(data)
 	return data
+
+def start_idle(machine):
+	res=urllib.request.urlopen(machine+"/start_idle")
+	#print(res.read().decode('utf-8'))
+	data=res.read().decode('utf-8')
+	return data
+def start_idle_all():
+	a=[]
+	for m in machines:
+		x=start_idle(m)
+		a.append(x)
+	return a
+
+def stop_idle(machine):
+	res=urllib.request.urlopen(machine+"/stop_idle")
+	#print(res.read().decode('utf-8'))
+	data=res.read().decode('utf-8')
+	return data
+def stop_idle_all():
+	a=[]
+	for m in machines:
+		x=stop_idle(m)
+		a.append(x)
+	return a
 
 def set_freq_core(machine, core, freq):
 	res=urllib.request.urlopen(machine+"/set_freq?core=%d&freq=%d"%(core,freq))
