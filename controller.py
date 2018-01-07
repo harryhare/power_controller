@@ -88,7 +88,7 @@ def get_freq_average():
 
 def get_current():
 	if(current_aquire_mode=='telnet'):
-		return get_current_telent()
+		return get_current_telnet()
 	else:
 		return get_current_web()
 
@@ -109,7 +109,7 @@ def telnet_init(tn):
 	print(x.decode())
 
 
-def get_current_telent():
+def get_current_telnet():
 	HOST = "192.168.1.100"
 	tn = telnetlib.Telnet(HOST)
 	x=tn.read_until(b"> ")
@@ -174,7 +174,7 @@ def get_power_freq_data():
 if __name__=="__main__":
 	#print('freq:',str(get_freq_all()))
 	#print('freq_average:',get_freq_average())
-	#print('power:',get_current())
+	print('power:',get_current())
 	#print('set_freq:',set_freq(0,1300000))
 	#print('util:',get_util_all())
-	print(get_power_freq_data())
+	#print(get_power_freq_data())

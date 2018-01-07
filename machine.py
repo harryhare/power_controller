@@ -26,10 +26,10 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 			util=get_util()
 			res=json.dumps(util)
 			self.send_response(200)
-		elif(path=='start_idle'):
+		elif(path=='/start_idle'):
 			res=str(os.system("./start_idle"))
 			self.send_response(200)
-		elif(path=='stop_idle'):
+		elif(path=='/stop_idle'):
 			res=str(os.system("./stop_idle"))
 			self.send_response(200)
 		elif(path=='/set_freq'):
