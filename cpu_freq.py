@@ -7,10 +7,13 @@ cpu_num = cpu_count()
 
 cpu_freq=[1600000,1500000,1400000,1300000]
 
+pre_filename="/sys/devices/system/cpu/cpu%d/cpufreq/"
+pre_filename="/sys/devices/system/cpu/cpufreq/policy%d/"
+
 def get_cur_freq():
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
 		return cpu_freq
-	cur_freq_file = "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_cur_freq"
+	cur_freq_file = pre_filename+"scaling_cur_freq"
 	cur_freq=[0]*cpu_num
 	for i in range(cpu_num):
 		file = open(cur_freq_file%(i),"r")
@@ -23,7 +26,7 @@ def set_freq(core, freq):
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
 		cpu_freq[core]=freq
 		return
-	set_freq_file = "/sys/devices/system/cpu/cpu%d/cpufreq/scaling_setspeed"
+	set_freq_file = pre_filename+"scaling_setspeed"
 	file=open(set_freq_file%(core),"w")
 	file.write(str(freq))
 	file.close()
