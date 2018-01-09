@@ -6,7 +6,7 @@ do
 done
 for((i=1200000;i<=2200000;i=i+100000))
 do
-    for((j=0;j<20;j=j+1))
+    for((j=0;j<$corenum;j=j+1))
     do
         echo $i > /sys/devices/system/cpu/cpufreq/policy$j/scaling_setspeed
     done
