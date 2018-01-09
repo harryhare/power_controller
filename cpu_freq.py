@@ -2,7 +2,7 @@ from multiprocessing import cpu_count
 import psutil
 import platform
 
-available_freq=[1600000,1500000,1400000,1300000,1200000]
+available_freq=[2200000,2100000,2000000,1900000,1800000,1700000,1600000,1500000,1400000,1300000,1200000]
 cpu_num = cpu_count()
 
 cpu_freq=[1600000,1500000,1400000,1300000]
