@@ -13,7 +13,7 @@ pdu="http://192.168.1.100/port_status.shtml"
 pdu_domain='Admin'
 pdu_uri='http://192.168.1.100'
 
-core_num=6
+core_num=20
 current_sample_num=50
 current_aquire_mode='web'#'web','telnet'
 telnet_username='user'
@@ -160,10 +160,9 @@ def get_power_freq_data():
 	for freq in available_freq:
 		set_freq_all(freq)
 		print("freq%d:"%(freq))
-		time.sleep(10)
-		p=get_current()
-		p=p/(len(machines)*core_num)
-		a[freq]=p
+		time.sleep(60)
+		c=get_current()
+		a[freq]=c
 		print("%f\n"%(p))
 	file = open("power_freq.data",'w')
 	for freq in available_freq:
