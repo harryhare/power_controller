@@ -155,15 +155,18 @@ def get_util_all():
 	return a
 
 
-def get_power_freq_data():
+def get_power_freq_data(ordered=False):
 	a={}
-	for freq in available_freq:
+	l=available_freq
+	if(ordered):
+		l.sort()
+	for freq in l:
 		set_freq_all(freq)
 		print("freq%d:"%(freq))
 		time.sleep(60)
 		c=get_current()
 		a[freq]=c
-		print("%f\n"%(p))
+		print("%f\n"%(c))
 	file = open("power_freq.data",'w')
 	for freq in available_freq:
 		file.write(str(freq)+","+str(a[freq])+'\n')
@@ -176,4 +179,4 @@ if __name__=="__main__":
 	#print('power:',get_current())
 	#print('set_freq:',set_freq(0,1300000))
 	#print('util:',get_util_all())
-	print(get_power_freq_data())
+	print(get_power_freq_data(True))
