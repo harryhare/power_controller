@@ -1,6 +1,6 @@
 #!/bin/bash
-#pwd
-for((i=0;i<20;i++))
+corenum=`cat corenum`
+for((i=0;i<$corenum;i++))
 do
     pid=`cat idle$i.pid`
     echo kill $pid

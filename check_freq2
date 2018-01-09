@@ -1,4 +1,5 @@
 #!/bin/bash
+corenum=`cat corenum`
 for((i=1200000;i<=3100000;i=i+100000))
 do
     x=$[i*100/3100000+1]
