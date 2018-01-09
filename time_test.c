@@ -8,7 +8,7 @@ time_t t0=time(0);
 time_t t;
 while(1){
     i++;
-    if(i%1000000000==0){
+    if(i%5000000000==0){
         c++;
         i=0;
         t=time(0);
