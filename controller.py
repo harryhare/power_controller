@@ -173,7 +173,7 @@ def get_power_freq_data():
 if __name__=="__main__":
 	#print('freq:',str(get_freq_all()))
 	#print('freq_average:',get_freq_average())
-	print('power:',get_current())
+	#print('power:',get_current())
 	#print('set_freq:',set_freq(0,1300000))
 	#print('util:',get_util_all())
-	#print(get_power_freq_data())
+	print(get_power_freq_data())
