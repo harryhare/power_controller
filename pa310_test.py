@@ -10,5 +10,14 @@ s.send(b':NUMERIC:VALUE?\n') # command
 s.send(b':NUMERIC:HOLD OFF\n')
 r = s.recv(30) # response
 #s.send(b':NUMERIC:HOLD OFF\n')
-print(r)
+#print(r)
 s.close() # disconnect
+b=r.decode('utf-8')
+i=b.find(',')
+j=b.rfind(',')
+#print(float(b[0:i]))
+#print(float(b[i+1:j]))
+#print(float(b[j+1:]))
+print(r)
+print(float(b[j+1:]))
+

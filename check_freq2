@@ -1,8 +1,8 @@
 #!/bin/bash
 corenum=`cat corenum`
-for((i=1200000;i<=3100000;i=i+100000))
+for((i=1200000;i<=2200000;i=i+100000))
 do
-    x=$[i*100/3100000+1]
+    x=$[i*100/2200000+1]
     echo $x
     echo $x > /sys/devices/system/cpu/intel_pstate/max_perf_pct
     #cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
