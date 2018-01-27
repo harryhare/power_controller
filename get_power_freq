@@ -1,0 +1,25 @@
+#!/bin/bash
+corenum=`cat corenum`
+for((j=0;j<$corenum;j=j+1))
+do
+    echo userspace > /sys/devices/system/cpu/cpufreq/policy$j/scaling_governor
+done
+for((i=1200000;i<=2200000;i=i+100000))
+do
+    for((j=0;j<$corenum;j=j+1))
+    do
+        echo $i > /sys/devices/system/cpu/cpufreq/policy$j/scaling_setspeed
+    done
+    #cat /sys/devices/system*/cpufreq/policy*/scaling_cur_freq
+    #echo freq:$i 
+    #time ./time_test
+    sleep 5
+    #echo "old meter"
+    #curl -s -u user:user http://192.168.1.100/port_status.shtml | grep CA 
+    #echo "new meter"
+    #x=`python3 pa310_test.py`
+    x=` echo ":NUMERIC:VALUE? 3" | nc 192.168.1.101 5025`
+    #echo '*********************************************************'
+    echo $i,$x,
+done
+
