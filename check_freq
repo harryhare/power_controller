@@ -13,7 +13,10 @@ do
     #cat /sys/devices/system*/cpufreq/policy*/scaling_cur_freq
     echo freq:$i 
     time ./time_test
+    echo "old meter"
     curl -s -u user:user http://192.168.1.100/port_status.shtml | grep CA 
+    echo "new meter"
+    python3 pa310_test.py
     echo '*********************************************************'
     echo ''
 done
