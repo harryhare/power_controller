@@ -5,17 +5,18 @@ import platform
 import time
 import getpass
 import telnetlib
+import socket
 
 from cpu_freq import available_freq
 
-machines=["http://192.168.1.99:8081","http://192.168.1.98:8081","http://192.168.1.74:8081"]
+machines=["http://192.168.1.99:8081","http://192.168.1.74:8081"]
 pdu="http://192.168.1.100/port_status.shtml"
 pdu_domain='Admin'
 pdu_uri='http://192.168.1.100'
 
 core_num=20
 current_sample_num=50
-current_aquire_mode='web'#'web','telnet'
+current_aquire_mode='telnet'#'web','telnet'
 telnet_username='user'
 telnet_passwd='user'
 
@@ -92,6 +93,17 @@ def get_current():
 	else:
 		return get_current_web()
 
+def get_power():
+	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
+		return 200
+	addr = ('192.168.1.101', 5025)  # PA310
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.connect(addr)  # connect
+	s.send(b':NUMERIC:VALUE? 3\n')  # command
+	r = s.recv(100)  # response
+	r = float(r)
+	s.close()  # disconnect
+	return r
 
 def telnet_init(tn):
 	HOST = "192.168.1.100"
@@ -174,9 +186,9 @@ def get_power_freq_data(ordered=False):
 	return a
 
 if __name__=="__main__":
-	#print('freq:',str(get_freq_all()))
-	#print('freq_average:',get_freq_average())
-	#print('power:',get_current())
-	#print('set_freq:',set_freq(0,1300000))
-	#print('util:',get_util_all())
-	print(get_power_freq_data(True))
+	print('freq:',str(get_freq_all()))
+	print('freq_average:',get_freq_average())
+	print('power:',get_power())
+	print('set_freq:',set_freq(0,1300000))
+	print('util:',get_util_all())
+	#print(get_power_freq_data(True))
