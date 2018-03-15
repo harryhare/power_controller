@@ -26,65 +26,82 @@ if(platform.platform()=='Windows-7-6.1.7601-SP1'):
 	core_num=4
 	current_sample_num = 5
 
-
-def get_freq(machine):
-	res=urllib.request.urlopen(machine+"/get_freq")
-	#print(res.read().decode('utf-8'))
-	data=res.read().decode('utf-8')
-	data=json.loads(data)
-	return data
-
 def start_idle(machine):
-	res=urllib.request.urlopen(machine+"/start_idle")
-	#print(res.read().decode('utf-8'))
+	res=urllib.request.urlopen(machines[machine]+"/start_idle")
 	data=res.read().decode('utf-8')
 	return data
+
 def start_idle_all():
 	a=[]
-	for m in machines:
+	for m in range(len(machines)):
 		x=start_idle(m)
 		a.append(x)
 	return a
 
 def stop_idle(machine):
-	res=urllib.request.urlopen(machine+"/stop_idle")
-	#print(res.read().decode('utf-8'))
+	res=urllib.request.urlopen(machines[machine]+"/stop_idle")
 	data=res.read().decode('utf-8')
 	return data
+
 def stop_idle_all():
 	a=[]
-	for m in machines:
+	for m in range(len(machines)):
 		x=stop_idle(m)
 		a.append(x)
 	return a
 
 def set_freq_core(machine, core, freq):
-	res=urllib.request.urlopen(machine+"/set_freq?core=%d&freq=%d"%(core,freq))
+	res=urllib.request.urlopen(machines[machine]+"/set_freq?core=%d&freq=%d"%(core,freq))
 	data=res.read().decode('utf-8')
 	data=json.loads(data)
 	return data
 
-def set_freq(machine,freq):
-	a=[]
-	for i in range(core_num):
-		a=(set_freq_core(machines[machine],i,freq))
-	return a
+def set_freq_machine(machine,freq):
+	res = urllib.request.urlopen(machines[machine] + "/set_freq_all?&freq=%d" % (freq))
+	data = res.read().decode('utf-8')
+	return json.loads(data)
 
 def set_freq_all(freq):
+	res =[]
 	for m in range(len(machines)):
-		set_freq(m,freq)
+		res.append(set_freq_machine(m,freq))
+	return res
+
+def get_freq_core(machine,core):
+	res=urllib.request.urlopen(machines[machine]+"/get_freq?core=%d"%(core))
+	data=res.read().decode('utf-8')
+	return json.loads(data)
+
+
+def get_freq_machine(machine):
+	res=urllib.request.urlopen(machines[machine]+"/get_freq_all")
+	data=res.read().decode('utf-8')
+	return json.loads(data)
 
 def get_freq_all():
 	a=[]
-	for m in machines:
-		a.append(get_freq(m))
+	for m in range(len(machines)):
+		a.append(get_freq_machine(m))
 	return a
+
 def get_freq_average():
 	a=[]
-	for m in machines:
-		b=get_freq(m)
+	for m in range(len(machines)):
+		b=get_freq_machine(m)
 		avg=sum(b)/len(b)
 		a.append(avg)
+	return a
+
+def get_util_machine(machine):
+	res=urllib.request.urlopen(machines[machine]+"/get_util")
+	data=res.read().decode('utf-8')
+	data=json.loads(data)
+	return data
+
+def get_util_all():
+	a=[]
+	for m in range(len(machines)):
+		a.append(get_util_machine(m))
 	return a
 
 def get_current():
@@ -154,18 +171,6 @@ def get_current_web():
 	return sum/n
 
 
-def get_util(machine):
-	res=urllib.request.urlopen(machine+"/get_util")
-	data=res.read().decode('utf-8')
-	data=json.loads(data)
-	return data
-
-def get_util_all():
-	a=[]
-	for m in machines:
-		a.append(get_util(m))
-	return a
-
 
 def get_power_freq_data(ordered=False):
 	a={}
@@ -185,10 +190,19 @@ def get_power_freq_data(ordered=False):
 	file.close()
 	return a
 
-if __name__=="__main__":
+def test():
 	print('freq:',str(get_freq_all()))
 	print('freq_average:',get_freq_average())
 	print('power:',get_power())
-	print('set_freq:',set_freq(0,1300000))
+	print('set_freq:',set_freq_machine(0,1300000))
 	print('util:',get_util_all())
 	#print(get_power_freq_data(True))
+
+
+if __name__=="__main__":
+   current_power=get_power()
+   util=get_util_all()
+   freq=get_freq_all()
+   A=1
+   B=1
+   #A(p(1)-target_p)^2+A(p(2)-target)
