@@ -6,8 +6,6 @@ import os
 from cpu_freq import *
 
 
-
-
 class SETHandler(http.server.BaseHTTPRequestHandler):
 	def do_GET(self):
 		print("GET")
@@ -86,7 +84,13 @@ class SETHandler(http.server.BaseHTTPRequestHandler):
 		self.send_response(200)
 		self.end_headers()
 
-if  __name__ == '__main__':
+
+def init():
+	change_governor()
+
+
+if __name__ == '__main__':
+	init()
 	Handler = SETHandler
 	PORT = 8081
 	httpd = socketserver.TCPServer(("", PORT), Handler)

@@ -180,10 +180,10 @@ def get_power_freq_data(ordered=False):
 	for freq in l:
 		set_freq_all(freq)
 		print("freq%d:"%(freq))
-		time.sleep(60)
-		c=get_current()
-		a[freq]=c
-		print("%f\n"%(c))
+		time.sleep(5)
+		p=get_power()
+		a[freq]=p
+		print("%f\n"%(p))
 	file = open("power_freq.data",'w')
 	for freq in available_freq:
 		file.write(str(freq)+","+str(a[freq])+'\n')
@@ -196,13 +196,14 @@ def test():
 	print('power:',get_power())
 	print('set_freq:',set_freq_machine(0,1300000))
 	print('util:',get_util_all())
-	#print(get_power_freq_data(True))
+	print(get_power_freq_data(True))
 
 
 if __name__=="__main__":
-   current_power=get_power()
-   util=get_util_all()
-   freq=get_freq_all()
-   A=1
-   B=1
+	test()
+	current_power=get_power()
+	util=get_util_all()
+	freq=get_freq_all()
+	A=1
+	B=1
    #A(p(1)-target_p)^2+A(p(2)-target)

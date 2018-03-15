@@ -10,6 +10,15 @@ cpu_freq=[1600000,1500000,1400000,1300000]
 pre_filename="/sys/devices/system/cpu/cpu%d/cpufreq/"
 pre_filename="/sys/devices/system/cpu/cpufreq/policy%d/"
 
+def change_governor():
+	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
+		return
+	filename=pre_filename+"scaling_governor"
+	for core in range(cpu_num):
+		file = open(filename%(core),"r")
+		file.write("userspace")
+		file.close()
+
 def get_avail_freq(f):
 	freq=min(available_freq)
 	for t in available_freq:
