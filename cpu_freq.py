@@ -15,7 +15,7 @@ def change_governor():
 		return
 	filename=pre_filename+"scaling_governor"
 	for core in range(cpu_num):
-		file = open(filename%(core),"r")
+		file = open(filename%(core),"w")
 		file.write("userspace")
 		file.close()
 
