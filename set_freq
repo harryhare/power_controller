@@ -1,0 +1,11 @@
+#!/bin/bash
+corenum=`cat corenum`
+for((j=0;j<$corenum;j=j+1))
+do
+    echo userspace > /sys/devices/system/cpu/cpufreq/policy$j/scaling_governor
+done
+for((j=0;j<$corenum;j=j+1))
+do
+    echo $1 > /sys/devices/system/cpu/cpufreq/policy$j/scaling_setspeed
+done
+
