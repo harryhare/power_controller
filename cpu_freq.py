@@ -5,9 +5,14 @@ import platform
 available_freq=[2200000,2100000,2000000,1900000,1800000,1700000,1600000,1500000,1400000,1300000,1200000]
 cpu_num = cpu_count()
 
-cpu_freq=[1600000,1500000,1400000,1300000]
+if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
+	cpu_num=4
+fake_freq=[1200000]*4
+fake_util=[0.25, 0.50, 0.75, 1.00]
+fake_max_freq=max(available_freq)
+fake_min_freq=min(available_freq)
 
-pre_filename="/sys/devices/system/cpu/cpu%d/cpufreq/"
+#pre_filename="/sys/devices/system/cpu/cpu%d/cpufreq/"
 pre_filename="/sys/devices/system/cpu/cpufreq/policy%d/"
 
 def change_governor():
@@ -35,7 +40,7 @@ def get_freq_all():
 
 def get_freq(core):
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
-		return cpu_freq[core]
+		return fake_freq[core]
 	cur_freq_file = pre_filename+"scaling_cur_freq"
 	file = open(cur_freq_file%(core),"r")
 	cur=file.read()[:-1]
@@ -45,7 +50,7 @@ def get_freq(core):
 
 def set_freq(core, freq):
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
-		cpu_freq[core]=freq
+		fake_freq[core]=freq
 		return
 	set_freq_file = pre_filename+"scaling_setspeed"
 	file=open(set_freq_file%(core),"w")
@@ -61,6 +66,14 @@ def get_util_total():
 	return psutil.cpu_percent(0)
 
 def get_util():
+	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
+		#util model
+		util=[0]*cpu_num
+		for i in range(cpu_num):
+			util[i]=fake_util[i]*fake_max_freq/fake_freq[i]
+			if(util[i]>1):
+				util[i]=1.0
+		return util
 	return psutil.cpu_percent(0,True)
 
 def get_util_top():
