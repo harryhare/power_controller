@@ -10,16 +10,16 @@ def sqr(p):
 def test():
 	print(minimize(sqr, np.array([1]*4)))
 
-N1=2 # change freq clost to targ_power
-N2=2 # change freq close to max freq
+N1=1 # change freq clost to targ_power
+N2=1 # change freq close to max freq
 A=100.
 B=1.
 #D=(274.79E+00-266.34E+00)/200
 freq_factor=(292.1E+00-275.05E+00)/200
-sigma=2. # large sigma -> target power change slow
+sigma=4. # large sigma -> target power change slow
 
 #target_power = 290  #292-310,machine 1
-target_power = 17
+target_power = 15
 max_power = 310
 maxfreq = 22 #2200000
 minfreq = 12 #1200000
@@ -164,15 +164,16 @@ def get_max_index(l):
 	return index
 
 def adjust_freq_to_int(current_freq, d_freq):
-	temp_freq = current_freq + d_freq
+	target_freq = current_freq + d_freq
+	core_num=len(current_freq)
 	for i in range(core_num):
-		temp_freq[i] = round(temp_freq[i])
-		if (temp_freq[i] > max_freq[i]):
-			temp_freq[i] = max_freq[i]
-		if (temp_freq[i] < min_freq[i]):
-			temp_freq[i] = min_freq[i]
-	left = sum(temp_freq) - sum(current_freq)
-	diff = temp_freq - current_freq
+		current_freq[i] = round(target_freq[i])
+		if (current_freq[i] > max_freq[i]):
+			current_freq[i] = max_freq[i]
+		if (current_freq[i] < min_freq[i]):
+			current_freq[i] = min_freq[i]
+	left =  sum(target_freq) - sum(current_freq)
+	diff = target_freq - current_freq
 	while (left >= 1):
 		index = get_max_index(diff)
 		if (diff[index] < 0):
@@ -201,7 +202,7 @@ def test_discret_freq():
 	global current_util
 	global current_power
 	print(core_num)
-	current_freq=np.array([12,12,12,12])
+	current_freq=np.array([22,22,22,22])
 	fake_update()
 	for i in range (10):
 		print('period  %d:'%(i))
@@ -222,12 +223,28 @@ def adjust_freq():
 	set_freq_list(current_freq*100000)
 	return
 
+def adjust_freq_test():
+	global max_freq
+	global min_freq
+	max_freq=[22]*20
+	min_freq=[12]*20
+	adjust_freq_to_int(np.array([22, 22, 22, 22, 22,
+	                    22, 22, 22., 22, 22.,
+	                    22., 22., 22., 22. ,22.,
+	                    22., 22. ,22.,22. ,22.]),
+	                   np.array([-0.3367607 , -0.3367607 , -0.33676064,-0.33676064, -0.33676064, -0.3367607,
+						 -0.33676065, -0.33676064, -0.33676064, -0.33676064 ,-0.33676064,-0.33676064,
+						 -0.33676064 ,-0.33676064, -0.33676064,-0.33676064, -0.33676064,-0.33676064,
+						 -0.33676064, -0.33676064]))
+
+
 if __name__=="__main__":
 	#test_continues_freq()
-	#test_discret_freq()
-	while(True):
-		adjust_freq()
-		time.sleep(1)
+	test_discret_freq()
+	#adjust_freq_test()
+	# while(True):
+	# 	adjust_freq()
+	# 	time.sleep(1)
 
 
 
