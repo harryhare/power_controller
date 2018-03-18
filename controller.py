@@ -14,6 +14,8 @@ N1=2 # change freq clost to targ_power
 N2=2 # change freq close to max freq
 A=100.
 B=1.
+#D=(274.79E+00-266.34E+00)/200
+freq_factor=(292.1E+00-275.05E+00)/200
 sigma=2. # large sigma -> target power change slow
 
 #target_power = 290  #292-310,machine 1
@@ -76,7 +78,7 @@ def cal_d_power( d_freq,c):
 	y=0
 	for dx in d_freq:
 		#y+=0.000017*dx
-	    y+=dx/5.
+	    y+=dx*freq_factor
 	return y*c
 
 
@@ -122,7 +124,7 @@ def get_fake_util():
 
 def get_fake_power():
 	x=current_freq
-	return sum(x) / 5.
+	return sum(x) /5.
 
 def test_continues_freq():
 	global core_num
