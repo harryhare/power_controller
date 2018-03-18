@@ -1,4 +1,5 @@
 import urllib.request
+import urllib.parse
 import json
 import re
 import platform
@@ -62,6 +63,28 @@ def set_freq_machine(machine,freq):
 	data = res.read().decode('utf-8')
 	return json.loads(data)
 
+def set_freq_list(freq):
+	a=[]
+	end=0
+	core_list=get_corenum_all()
+	for m in range(len(machines)):
+		begin=end
+		end=begin+core_list[m]
+		data={'freq':list(freq[begin:end])}
+		data=urllib.parse.urlencode(data)
+		#res= urllib.request.urlopen(machines[m] + "/set_freq_list?freq=%s" % (urllib.parse.urlencode(json.dumps(list(freq[begin:end])))))
+		res= urllib.request.urlopen(machines[m] + "/set_freq_list?"+data)
+		# x=list(freq[begin:end])
+		# print(type(x),x)
+		# x=json.dumps(x)
+		# print(type(x),x)
+		# x=urllib.parse.urlencode(x)
+		# print(type(x),x)
+		# res=urllib.request.urlopen(machines[m] + "/set_freq_list?freq="+urllib.parse.urlencode(json.dumps(list(freq[begin:end]))))
+		data = res.read().decode('utf-8')
+		a.append(data)
+	return json.loads(data)
+
 def set_freq_all(freq):
 	res =[]
 	for m in range(len(machines)):
@@ -74,15 +97,15 @@ def get_freq_core(machine,core):
 	return json.loads(data)
 
 
-def get_freq_machine(machine):
-	res=urllib.request.urlopen(machines[machine]+"/get_freq_all")
+def get_freq_machine(machine,type=''):
+	res=urllib.request.urlopen(machines[machine]+"/get_"+type+"freq_all")
 	data=res.read().decode('utf-8')
 	return json.loads(data)
 
-def get_freq_all():
+def get_freq_all(type=''):
 	a=[]
 	for m in range(len(machines)):
-		a.append(get_freq_machine(m))
+		a.append(get_freq_machine(m,type))
 	return a
 
 def get_freq_average():
@@ -92,6 +115,19 @@ def get_freq_average():
 		avg=sum(b)/len(b)
 		a.append(avg)
 	return a
+
+def get_corenum_machine(machine):
+	res=urllib.request.urlopen(machines[machine]+"/get_corenum")
+	data=res.read().decode('utf-8')
+	data=json.loads(data)
+	return data
+
+def get_corenum_all():
+	a=[]
+	for m in range(len(machines)):
+		a.append(get_corenum_machine(m))
+	return a
+
 
 def get_util_machine(machine):
 	res=urllib.request.urlopen(machines[machine]+"/get_util")
@@ -114,7 +150,7 @@ def get_current():
 def get_power():
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
 		x = np.array(get_freq_all()).flatten()
-		return sum(x)/100000.
+		return sum(x)/500000.
 	addr = ('192.168.1.101', 5025)  # PA310
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.connect(addr)  # connect
@@ -193,6 +229,7 @@ def get_power_freq_data(ordered=False):
 	return a
 
 def test_basic():
+	print('core_num',get_corenum_all())
 	print('freq:',str(get_freq_all()))
 	print('freq_average:',get_freq_average())
 	print('power:',get_power())
@@ -202,6 +239,7 @@ def test_basic():
 
 def test_model():
 	for i in range(1200000,2300000,100000):
+		print('core_num',get_corenum_all())
 		print("freq:",set_freq_all(i))
 		print("util:",get_util_all())
 		print("power:",get_power())

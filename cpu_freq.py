@@ -15,7 +15,7 @@ fake_min_freq=min(available_freq)
 #pre_filename="/sys/devices/system/cpu/cpu%d/cpufreq/"
 pre_filename="/sys/devices/system/cpu/cpufreq/policy%d/"
 
-def change_governor():
+def set_governor():
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
 		return
 	filename=pre_filename+"scaling_governor"
@@ -23,6 +23,9 @@ def change_governor():
 		file = open(filename%(core),"w")
 		file.write("userspace")
 		file.close()
+
+def get_corenum():
+	return psutil.cpu_count()
 
 def get_avail_freq(f):
 	freq=min(available_freq)
@@ -32,16 +35,23 @@ def get_avail_freq(f):
 			break
 	return freq
 
-def get_freq_all():
+def get_freq_all(type='cur'):
 	cur_freq=[0]*cpu_num
 	for core in range(cpu_num):
-		cur_freq[core] = get_freq(core)
+		cur_freq[core] = get_freq(core,type)
 	return cur_freq
 
-def get_freq(core):
+def get_freq(core, type='cur'):
 	if (platform.platform() == 'Windows-7-6.1.7601-SP1'):
-		return fake_freq[core]
-	cur_freq_file = pre_filename+"scaling_cur_freq"
+		if (type=='cur'):
+			return fake_freq[core]
+		elif(type=='min'):
+			return 1200000
+		elif(type=='max'):
+			return 2200000
+		else:
+			return -1
+	cur_freq_file = pre_filename+"scaling_"+type+"_freq"
 	file = open(cur_freq_file%(core),"r")
 	cur=file.read()[:-1]
 	cur_freq = int(cur)
@@ -61,6 +71,10 @@ def set_freq(core, freq):
 def set_freq_all(freq):
 	for core in range(cpu_num):
 		set_freq(core,freq)
+
+def set_freq_list(freq):
+	for core in range(cpu_num):
+		set_freq(core,freq[core])
 
 def get_util_total():
 	return psutil.cpu_percent(0)
@@ -87,7 +101,11 @@ if __name__=='__main__':
 	print(get_freq(1))
 	print(set_freq_all(1200000))
 	print(get_freq_all())
+	print(psutil.cpu_count())#logic
+	print(psutil.cpu_count(False))#real
 	print(psutil.cpu_stats())
+	print(psutil.cpu_freq())#averge
+	print(psutil.cpu_freq(True))#each
 	print(psutil.cpu_percent(None))
 	print(psutil.cpu_percent(None,True))
 	print(psutil.cpu_percent(1,True))

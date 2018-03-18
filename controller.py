@@ -10,10 +10,11 @@ def sqr(p):
 def test():
 	print(minimize(sqr, np.array([1]*4)))
 
-N1=1 # change freq clost to targ_power
+N1=2 # change freq clost to targ_power
 N2=2 # change freq close to max freq
-A=800.
+A=100.
 B=1.
+sigma=2. # large sigma -> target power change slow
 
 #target_power = 290  #292-310,machine 1
 target_power = 17
@@ -26,9 +27,10 @@ min_freq = []
 current_freq = []
 current_util = []
 core_num = 0
+core_list = []
 current_power = 0
 
-def init():
+def update():
 	global core_num
 	global maxfreq
 	global minfreq
@@ -37,12 +39,17 @@ def init():
 	global current_util
 	global max_freq
 	global min_freq
+	global core_list
+	global period
+	period += 1
 	current_power = get_power()
 	current_freq = np.array(get_freq_all()).flatten()/100000
 	current_util = np.array(get_util_all()).flatten()
 	core_num = len(current_freq)
-	max_freq = [maxfreq]*core_num
-	min_freq = [minfreq]*core_num
+	core_list = get_corenum_all()
+	max_freq = np.array(get_freq_all('max')).flatten()/100000
+	min_freq = np.array(get_freq_all('min')).flatten()/100000
+	print('peroid:%d'%(period))
 	print('current_power:%.2f,target:%.2f'%(current_power,target_power))
 	print('freq:',current_freq)
 	print('util:',current_util)
@@ -74,7 +81,7 @@ def cal_d_power( d_freq,c):
 
 
 def cal_target_power(target_power, current_power, i):
-	return target_power+(current_power-target_power)*exp(-i/2.)# 0.95 -> 6 time
+	return target_power+(current_power-target_power)*exp(-i/sigma)# 0.95 -> 6 time
 
 
 def cal_perform_loss( d_freq, c):
@@ -82,10 +89,10 @@ def cal_perform_loss( d_freq, c):
 	y=0
 	for i in range(core_num):
 		x=current_freq[i]+d_freq[i]*c
-		if(x>max_freq[i]):
-			x=max_freq[i]
-		elif(x<min_freq[i]):
-			x=min_freq[i]
+		# if(x>max_freq[i]):
+		# 	x=max_freq[i]
+		# elif(x<min_freq[i]):
+		# 	x=min_freq[i]
 		y+=(max_freq[i]-x)**2*current_util[i]
 	return y
 
@@ -99,7 +106,7 @@ def fun(d_freq):
 	y2=0
 	for i in range(1,N2+1):
 		y2+=(cal_perform_loss(d_freq,i))
-	print('A*y1:%.8f,B*y2:%.8f,%.8f'%(A*y1,B*y2,A*y1+B*y2),d_freq)
+	#print('A*y1:%.8f,B*y2:%.8f,%.8f'%(A*y1,B*y2,A*y1+B*y2),d_freq)
 	return A*y1+B*y2
 
 def get_fake_util():
@@ -123,14 +130,19 @@ def test_continues_freq():
 	global current_util
 	global current_power
 	print(core_num)
-	current_freq=np.array([17,17,17,17])
+	current_freq=np.array([22,22,22,22])
 	fake_update()
-	for i in range (10):
+	for i in range (20):
 		print('period  %d:'%(i))
 		res = minimize(fun, np.array([-0] * core_num))
 		d_freq=res['x']
 		print(d_freq)
 		current_freq = current_freq+d_freq
+		for i in range(core_num):
+			if(current_freq[i]>max_freq[i]):
+				current_freq[i]=max_freq[i]
+			if(current_freq[i]<min_freq[i]):
+				current_freq[i]=min_freq[i]
 		fake_update()
 
 
@@ -149,6 +161,37 @@ def get_max_index(l):
 			index=i
 	return index
 
+def adjust_freq_to_int(current_freq, d_freq):
+	temp_freq = current_freq + d_freq
+	for i in range(core_num):
+		temp_freq[i] = round(temp_freq[i])
+		if (temp_freq[i] > max_freq[i]):
+			temp_freq[i] = max_freq[i]
+		if (temp_freq[i] < min_freq[i]):
+			temp_freq[i] = min_freq[i]
+	left = sum(temp_freq) - sum(current_freq)
+	diff = temp_freq - current_freq
+	while (left >= 1):
+		index = get_max_index(diff)
+		if (diff[index] < 0):
+			break
+		if (current_freq[index] + 1 > max_freq[index]):
+			diff[index] = -1
+			continue
+		current_freq[index] += 1
+		diff[index] -= 1
+		left -= 1
+	while (left <= -1):
+		index = get_min_index(diff)
+		if (diff[index] > 0):
+			break
+		if (current_freq[index] - 1 < min_freq[index]):
+			diff[index] = 1
+			continue
+		current_freq[index] -= 1
+		diff[index] += 1
+		left += 1
+	return current_freq
 
 def test_discret_freq():
 	global core_num
@@ -156,50 +199,34 @@ def test_discret_freq():
 	global current_util
 	global current_power
 	print(core_num)
-	current_freq=np.array([20,21,21,21])
+	current_freq=np.array([12,12,12,12])
 	fake_update()
-	for i in range (1):
+	for i in range (10):
 		print('period  %d:'%(i))
 		res = minimize(fun, np.array([-0] * core_num))
 		d_freq=res['x']
 		print(d_freq)
-		temp_freq = current_freq+d_freq
-		for i in range(core_num):
-			current_freq[i]=round(temp_freq[i])
-			if(current_freq[i]>max_freq[i]):
-				current_freq[i]=max_freq[i]
-			if(current_freq[i]<min_freq[i]):
-				current_freq[i]=min_freq[i]
-		left=sum(temp_freq)-sum(current_freq)
-		diff=temp_freq-current_freq
-		while(left>=1):
-			index=get_max_index(diff)
-			if(diff[index]<0):
-				break
-			if(current_freq[index]+1>max_freq[index]):
-				diff[index]=-1
-				continue
-			current_freq[index]+=1
-			diff[index]-=1
-			left-=1
-		while(left<=-1):
-			index=get_min_index(diff)
-			if(diff[index]>0):
-				break
-			if(current_freq[index]-1<min_freq[index]):
-				diff[index]=1
-				continue
-			current_freq[index]-=1
-			diff[index]+=1
-			left+=1
+		current_freq=adjust_freq_to_int(current_freq,d_freq)
 		fake_update()
 
+period = 0
 def adjust_freq():
-
+	global current_freq
+	update()
+	res = minimize(fun, np.array([-0] * core_num))
+	d_freq = res['x']
+	print('d_freq',d_freq)
+	current_freq=adjust_freq_to_int(current_freq,d_freq)
+	set_freq_list(current_freq*100000)
 	return
 
 if __name__=="__main__":
-	test_discret_freq()
+	#test_continues_freq()
+	#test_discret_freq()
+	while(True):
+		adjust_freq()
+		time.sleep(1)
+
 
 
 
